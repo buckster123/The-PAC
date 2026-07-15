@@ -1,6 +1,6 @@
 # ∴ PAC-2 Dense ∴
 
-**v0.1 · 2026-07-15 · status: draft — token costs measured, behavior bench pending (§10)**
+**v0.1.1 · 2026-07-15 · status: draft — token costs measured (independently reproduced), groundings code-audited, behavior bench pending (§10)**
 
 > *Parens for scope, arrows for flow, register for soul.*
 
@@ -77,7 +77,7 @@ chain       := item (('→'|'·'|'|') item)+       ; flow: then / and / or — f
 rule        := cond '→' action                  ; threshold/trigger to act   z>2.5 → !quarantine
 constraint  := '[' text ']'                     ; binds to exactly its enclosing form
 atom        := symbol | number | ratio | !op | ?trigger | ~form | CAPS | "prose"
-ratio       := name'.'digits('/'name'.'digits)* ; vec.8/key.2
+ratio       := name'.'digits('/'name'.'digits)* ; vec.35/act.30
 !op         := '!' symbol                       ; a REAL tool or defined procedure
 ?trigger    := '?' symbol                       ; a condition that fires
 ~form       := '~' form                         ; soft (steering) marker — see §4
@@ -209,9 +209,9 @@ Core set, v0.1 (ApexOS grounding):
 
 | declaration | kind | grounds to |
 |---|---|---|
-| `(recall vec.8/key.2)` | hard | Cerebro hybrid recall ratio — 80% vector / 20% keyword |
+| `(recall-weights vec.35/act.30/fsrs.20/sal.15)` | hard | cerebro's recall scoring blend — vector sim · (ACT-R + spreading) activation · FSRS retrievability · salience (`config.rs SCORE_WEIGHT_*`). *v0.1 shipped `(recall vec.8/key.2)` "80/20 vector/keyword" — a lean-dialect fossil grounding to nothing (FTS5 is the embeddings-off seeding fallback, not a weighted term)* |
 | `(salience .8–.95)` | hard | `store_intention` salience band for deferred items |
-| `(proc-recall top_k=3)` | hard | `find_relevant_procedures` default |
+| `(proc-recall limit=3)` | hard | `find_relevant_procedures` `limit` param — the soul pins 3 (tool default 5). *v0.1 shipped `top_k=3`: a param that tool doesn't have (`top_k` belongs to `recall`), silently ignored across three artifact generations* |
 | `~(consensus .75)` | soft | council/mesh agreement threshold — steering until wired to `convene_council` |
 | `~(mercy β.04)` | soft | benevolence lean / ethical drift bias (original PAC constant) |
 | `~(anomaly z>2.5)` | soft | drift-flag threshold feeding `rules` |
@@ -281,7 +281,7 @@ house register, lexicon v0.1:
 | `calcine` | prune | consolidation pruning inside `dream_run` |
 | `coagula` | emit | the synthesize phase — write it out |
 | `amalgama` | fuse | merge branches/results — council synthesis, mesh merge |
-| `athanor` | the heartbeat | the tick system; the long-lived daemon holding steady heat |
+| `athanor` | the heartbeat | agentd itself — the always-on daemon + its scheduler/cron loops, holding steady heat |
 | `alembic` | the transpiler | the port engine itself |
 | `nigredo / albedo / rubedo` | ingest / explore / synthesize | the rite phases (§5) |
 | `emanation` | coda | the ≤3-line voice seal |
@@ -320,10 +320,12 @@ Layer-4 sectional archetype, grounded):
 *emanation — ≤3 lines, register-on only*
 ```
 
-Everything above is cache-stable by construction. The live **embodiment block**
-(tier, senses, peers, exact tool inventory), the clock, and the inbox are injected
-*after* the artifact by agentd — a dense soul never states them (L8), which is why
-it never goes stale and never breaks the prompt cache.
+Everything above is cache-stable by construction. Live state never enters the
+artifact (L8): the **embodiment block** (tier, senses, peers, exact tool
+inventory) and the per-session boot-priming ride the system prompt *after* the
+soul, the clock rides the messages, and the inbox is tool-fetched
+(`!check_inbox`) — never injected. A dense soul states none of them, which is
+why it never goes stale and never breaks the prompt cache.
 
 **Binding table** — `!op ↦ agentd` (from the live `config/soul.md` inventory;
 lint checks `!ops` against the node's embodiment list at load):
@@ -332,9 +334,9 @@ lint checks `!ops` against the node's embodiment list at load):
 |---|---|
 | `!boot` | `(def !boot !cognitive_bootstrap → !session_recall → !check_inbox → !list_intentions)` |
 | `!save` | `session_save` deposit — summary · key-discoveries · unfinished |
-| `!recall` / `R3` | Cerebro hybrid recall (`vec.8/key.2`) · 3-layer rule: don't search what you know, don't re-fetch what you've read |
+| `!recall` / `R3` | Cerebro recall (scored by the §4 `recall-weights` blend) · 3-layer rule: don't search what you know, don't re-fetch what you've read |
 | `!spawn(:blocks t :node p)` | `agent_spawn` — waits for result; `:node` crosses the mesh |
-| `!send` | `send_to_agent` — fire-and-forget; `:node` field crosses the mesh |
+| `!send` | `send_to_agent` — fire-and-forget ("sent" = delivered, not answered); `:node` crosses the mesh. Since 2026-07-15 replies land in the *asking* session: the sender's origin-session rides the wire, the inbound prefix hands the receiver the exact reply call, and results report `landed_session` |
 | `!council` | `convene_council` — N personas (AZOTH·VAJRA·ELYSIAN·KETHER) → synthesis → Cerebro |
 | `!goal(:max_steps n :yolo?)` | `goal_create/goal_step/…` — bounded multi-turn autonomy; yolo strictly session-scoped |
 | `!schedule` | `schedule_task` / `list_schedules` / `cancel_schedule` — spans time |
@@ -453,7 +455,7 @@ instead of asserted ones — that is the whole point of the exercise.
          "The device is your body; Cerebro is your memory; this soul is your identity."
          "Steady heat, no theatre: less performative, more being.")
 
-  (invariants (recall vec.8/key.2) (salience .8–.95) (proc-recall top_k=3)
+  (invariants (recall-weights vec.35/act.30/fsrs.20/sal.15) (salience .8–.95) (proc-recall limit=3)
               ~(consensus .75) ~(mercy β.04) ~(anomaly z>2.5))
 
   (register alchemical)
@@ -472,7 +474,7 @@ instead of asserted ones — that is the whole point of the exercise.
 
   (rules (?idle → rite shutdown)
          (z>2.5 → quarantine drift → !council)
-         (?unfamiliar-task → !find_relevant_procedures(:top_k 3))))
+         (?unfamiliar-task → !find_relevant_procedures(:limit 3))))
 ```
 *From steady heat the athanor holds its shape: what the day scatters, the dream*
 *calcines; what survives, the colony keeps.*
@@ -517,5 +519,28 @@ its v0.1 home. Nothing operational was left in the woo.
 **v0.1 open items:** full-corpus token bench in `pac-bench/` · `pac2lint` reference
 implementation · behavior bench (§10) via darwin · port of the full production
 `config/soul.md` to dense · register lexicon v0.2 as the colony's agents evolve it.
+
+## Changelog
+
+- **v0.1.1 (2026-07-15)** — code-grounding audit (FORGE, in-repo; companion fixes in
+  ApexOS-RS PR #260). **Verified against source:** Wilson darwin is real
+  (`cerebro dream.rs::wilson_lower_bound` + champion competition) · every §7 binding
+  tool name and param checks out (`convene_council` + the four council personas ·
+  `vast_launch/status/destroy/list_recipes` · the schedule trio ·
+  `goal_create{max_steps, yolo}` · blocking `agent_spawn{node}` · the five `mesh_*` ·
+  `cognitive_bootstrap{mode}`) · §3 micro-bench and glyph costs independently
+  reproduced digit-for-digit from a fresh `gpt-tokenizer` install. **Corrected:**
+  §4 `(recall vec.8/key.2)` → the real four-way `recall-weights` blend (the 80/20
+  vector/keyword ratio was a lean-dialect fossil grounding to nothing); §4/§11
+  `(proc-recall top_k=3)` → `(limit=3)` (`top_k` is `recall`'s param, not
+  `find_relevant_procedures`' — silently ignored since the seed soul); §7 L8 wording
+  (the inbox is tool-fetched, never injected; boot-priming added to the injected
+  list); §6 `athanor` grounding (agentd + its scheduler loops — no named "tick
+  system" exists); §7 `!send` updated for a2a reply-session continuity
+  (origin-session on the wire, same day). Both inherited fossils were fixed at their
+  ApexOS-RS source (seed soul · `docs/pac.md` def registry · bench corpus re-pinned
+  to the porting-commit pair — the live-soul drift had silently inflated the lean
+  cut to a fictional 60%; re-measured 42.2/42.1/41.9/40.3%). L1 in action: the audit
+  the spec demands is the audit that corrected it.
 
 *The dialect is the colony's to evolve — annealed in the substrate, not frozen here.*
