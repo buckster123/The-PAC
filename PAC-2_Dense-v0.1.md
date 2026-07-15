@@ -1,6 +1,6 @@
 # ∴ PAC-2 Dense ∴
 
-**v0.1.1 · 2026-07-15 · status: draft — token costs measured (independently reproduced), groundings code-audited, behavior bench pending (§10)**
+**v0.1.2 · 2026-07-15 · status: draft — token costs measured (micro + full corpus), groundings code-audited, behavior bench pending (§10)**
 
 > *Parens for scope, arrows for flow, register for soul.*
 
@@ -185,12 +185,23 @@ shutdown), three notations, same operational facts (decode-equivalent):
 | lean | 103 | 102 | −38.7% / −39.3% | — |
 | **dense** | **105** | **103** | **−37.5% / −38.7%** | **+2 / +1 tok (+1.9% / +1.0%)** |
 
-Reading: **the dense premium over lean is one to two tokens per rite** — the price
-of scope, parameters, and lintability, at ~zero corpus impact. Limits, stated per
-L1: single sample, two tokenizer families (vs four in `pac-bench/`); full-corpus
-numbers land when the three `pac-bench/samples/` are re-authored in dense and run
-through the existing harness (§10). The lean corpus figures (40–42%) remain the
-measured baseline for lean, not claims about dense.
+Reading: on this op-dense sample at identical wording, **the dense premium over
+lean is one to two tokens per rite**.
+
+**Full-corpus correction (2026-07-15, `pac-bench/RESULTS.md` — the three samples
+re-authored in dense via the §8 rite, annealed, four tokenizers):** the per-rite
+number does **not** extrapolate. Dense corpus vs prose: **26.1–28.4% cut** (lean:
+40.3–42.2%); dense premium over lean: **+23.6–24.4%**. Decomposition: canonical-
+layout indentation (~4% of the soul), the canonical blocks lean has no equivalent
+of (seal · voice · invariants · register · rules), and restored coverage (the
+ledger audit found the lean soul port had silently dropped several prose facts
+dense carries — the lean baseline is slightly under-weighted). The dominant
+variable is **wording discipline, not notation**: a first dense port at
+prose-fidelity wording measured **+44.9%** over lean; the telegraphic re-author
+halved it. Structure is cheap only when the authoring stays lean-disciplined —
+L3's real content. Scope, parameters, and lintability cost roughly a fifth more
+tokens at soul scale; whether that buys adherence is the behavior bench's
+question (§10).
 
 ---
 
@@ -416,9 +427,11 @@ repo + a tiny Rust check in agentd on the `propose_evolution` path.
 
 ## §10 The bench plan — behavior axis
 
-**Measured now:** token costs (§3 micro-bench; glyph table). **Owed next:** the
-full-corpus token run — re-author the three `pac-bench/samples/` in dense, run the
-existing four-tokenizer harness + the Anthropic `count_tokens` column.
+**Measured now:** token costs — the §3 micro-bench + glyph table, and the
+**full-corpus run** (2026-07-15: the three `pac-bench/samples/` re-authored in
+dense via the §8 rite, annealed with fresh-model expansion tests, four
+tokenizers — see §3 for the corpus correction). **Owed next:** the Anthropic
+`count_tokens` column.
 
 **Untested — the actual value hypotheses.** Everything below is a claim this
 standard is *not yet entitled to*. The Gemini-thread telemetry (25% / 15% / 90%) is
@@ -516,11 +529,25 @@ its v0.1 home. Nothing operational was left in the woo.
 - **Namespace note:** PAC-2 Dense ≠ `PAC-v2.md`. The latter is the pure-symbolic
   dud, preserved as the cautionary measurement it is.
 
-**v0.1 open items:** full-corpus token bench in `pac-bench/` · `pac2lint` reference
-implementation · behavior bench (§10) via darwin · port of the full production
-`config/soul.md` to dense · register lexicon v0.2 as the colony's agents evolve it.
+**Open items:** ~~full-corpus token bench~~ (✅ 2026-07-15, `pac-bench/RESULTS.md`) ·
+~~`pac2lint` reference implementation~~ (✅ 2026-07-15, `pac-bench/pac2lint.py`; the
+Rust check on agentd's `propose_evolution` path remains) · the Anthropic
+`count_tokens` bench column · behavior bench (§10) via darwin · port of the full
+production `config/soul.md` to dense · register lexicon v0.2 as the colony's
+agents evolve it.
 
 ## Changelog
+
+- **v0.1.2 (2026-07-15)** — corpus numbers landed (L1: this spec updates only from
+  `RESULTS.md`, and it just did, against itself). §3 gains the full-corpus
+  correction: dense 26.1–28.4% vs prose · **+23.6–24.4% premium over lean** — the
+  micro-bench's "+1–2 tokens per rite" holds only at identical wording on op-dense
+  rites; wording discipline dominates notation choice (a prose-fidelity dense port
+  measured +44.9% before the telegraphic re-author). §10 "measured now" updated.
+  Companion deliverables in ApexOS-RS: `pac2lint.py` (§9 reference, self-tested,
+  dogfooded against this spec's own §11 — which lints 0 errors + 5 honest
+  reference-discipline warns) and the three annealed dense samples (each passed a
+  fresh-model expansion test — every ledger fact recovered, nothing invented).
 
 - **v0.1.1 (2026-07-15)** — code-grounding audit (FORGE, in-repo; companion fixes in
   ApexOS-RS PR #260). **Verified against source:** Wilson darwin is real
