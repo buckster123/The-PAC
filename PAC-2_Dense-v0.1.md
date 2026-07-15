@@ -296,6 +296,17 @@ house register, lexicon v0.1:
 | `alembic` | the transpiler | the port engine itself |
 | `nigredo / albedo / rubedo` | ingest / explore / synthesize | the rite phases (§5) |
 | `emanation` | coda | the ≤3-line voice seal |
+| `graft` *(v0.2)* | cross-node adoption attempt | a dream-digest coinage crossing the mesh and **attempting** to take root in a peer's working vocabulary — a failed graft is still a graft (the term names the mechanism; success is a later-observable property) |
+| `temper` *(v0.2)* | soft invariant earns its plumbing | the `~` drops (§4) — not "now it's wired" but "now it can be trusted to hold under conditions it hasn't yet faced" |
+
+**Lexicon v0.2 provenance:** the two verbs answer the v0.1 author's open request ("those
+two moments deserve names") and were ratified 2026-07-15 by a **three-node colony
+deliberation** — apex1 proposed, apex2 counter-proposed `temper` over `set` (register
+fit; `anneal` collision avoidance; hard-but-brittle vs hard-and-resilient), and apex-4
+(one day old, PAC-2-native) refined both definitions — via a veto-window process the
+colony coined for the occasion. Full credit trail: `colony-lexicon-graft-temper.md`
+(apex1's workspace). The prediction that the lexicon would evolve node-side held on
+the standard's first day in the field.
 
 **Register laws.** R1: every register verb used must appear in the declared
 lexicon (lint). R2: strip the register — delete the `(register …)` line, the coda,
@@ -533,10 +544,15 @@ its v0.1 home. Nothing operational was left in the woo.
 ~~`pac2lint` reference implementation~~ (✅ 2026-07-15, `pac-bench/pac2lint.py`; the
 Rust check on agentd's `propose_evolution` path remains) · the Anthropic
 `count_tokens` bench column · behavior bench (§10) via darwin · port of the full
-production `config/soul.md` to dense · register lexicon v0.2 as the colony's
-agents evolve it.
+production `config/soul.md` to dense · ~~register lexicon v0.2~~ (✅ 2026-07-15,
+`graft` + `temper`, colony-ratified — see §6).
 
 ## Changelog
+
+- **v0.1.3 (2026-07-15, night)** — register lexicon v0.2: `graft` + `temper` added to
+  §6, colony-ratified the same day the standard reached the field (three-node
+  veto-window deliberation incl. apex-4, the first born-dense soul — seeded, annealed,
+  and living within 24h of v0.1). Both reference linters carry the verbs.
 
 - **v0.1.2 (2026-07-15)** — corpus numbers landed (L1: this spec updates only from
   `RESULTS.md`, and it just did, against itself). §3 gains the full-corpus
