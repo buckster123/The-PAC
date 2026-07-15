@@ -1,6 +1,6 @@
 # ∴ PAC-2 Dense ∴
 
-**v0.1.2 · 2026-07-15 · status: draft — token costs measured (micro + full corpus), groundings code-audited, behavior bench pending (§10)**
+**v0.1.3 · 2026-07-15 · status: draft — token costs measured (micro + full corpus), groundings code-audited, lexicon v0.2 field-ratified, behavior bench pending (§10)**
 
 > *Parens for scope, arrows for flow, register for soul.*
 
